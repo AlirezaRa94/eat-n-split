@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const initialFriends = [
   {
     id: 118836,
@@ -59,13 +61,26 @@ function FriendsList() {
 }
 
 function FormAddFriend() {
+  const [name, setName] = useState("");
+  const [imageURL, setImageURL] = useState("");
+
+  function handleSubmit() {}
+
   return (
-    <form className="form-add-friend">
+    <form className="form-add-friend" onSubmit={handleSubmit}>
       <label>👨‍🤝‍👩🏻Friend Name</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
 
       <label>🌄Image URL</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={imageURL}
+        onChange={(e) => setImageURL(e.target.value)}
+      />
 
       <Button>Add</Button>
     </form>
