@@ -119,21 +119,36 @@ function FormAddFriend({ onAddFriend }) {
 }
 
 function FormSplitBill({ friend }) {
+  const [bill, setBill] = useState(0);
+  const [userExpense, setUserExpense] = useState(0);
+  const [payer, setPayer] = useState("user");
+
+  function handleUserExpense(e) {
+    const value = Number(e.target.value);
+    bill >= value && setUserExpense(value);
+  }
+
   return (
     <form className="form-split-bill">
       <h2>Split a bill with {friend.name}</h2>
 
       <label>💰Bill Value</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={bill}
+        onChange={(e) =>
+          !isNaN(Number(e.target.value)) && setBill(Number(e.target.value))
+        }
+      />
 
       <label>🧑🏻Your Expenses</label>
-      <input type="text" />
+      <input type="text" value={userExpense} onChange={handleUserExpense} />
 
       <label>🤵🏻{friend.name}'s Expenses</label>
-      <input type="text" disabled />
+      <input type="text" disabled value={bill - userExpense} />
 
       <label>🤑 Who is paying the bill?</label>
-      <select>
+      <select value={payer} onChange={(e) => setPayer(e.target.value)}>
         <option value="user">You</option>
         <option value="friend">{friend.name}</option>
       </select>
