@@ -118,9 +118,10 @@ function FormAddFriend({ onAddFriend }) {
   );
 }
 
-function FormSplitBill({ friend }) {
+function FormSplitBill({ friend, onSplitBill }) {
   const [bill, setBill] = useState(0);
   const [userExpense, setUserExpense] = useState(0);
+  const friendExpense = bill - userExpense;
   const [payer, setPayer] = useState("user");
 
   function handleUserExpense(e) {
@@ -128,8 +129,16 @@ function FormSplitBill({ friend }) {
     bill >= value && setUserExpense(value);
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!bill) return;
+
+    onSplitBill(payer === "user" ? friendExpense : -userExpense);
+  }
+
   return (
-    <form className="form-split-bill">
+    <form className="form-split-bill" onSubmit={handleSubmit}>
       <h2>Split a bill with {friend.name}</h2>
 
       <label>💰Bill Value</label>
@@ -145,7 +154,7 @@ function FormSplitBill({ friend }) {
       <input type="text" value={userExpense} onChange={handleUserExpense} />
 
       <label>🤵🏻{friend.name}'s Expenses</label>
-      <input type="text" disabled value={bill - userExpense} />
+      <input type="text" disabled value={friendExpense} />
 
       <label>🤑 Who is paying the bill?</label>
       <select value={payer} onChange={(e) => setPayer(e.target.value)}>
@@ -172,6 +181,18 @@ export default function App() {
     setAddFriendIsOpen(false);
   }
 
+  function handleSplitBill(value) {
+    setFriends((friends) =>
+      friends.map((friend) =>
+        friend.id === selectedFriend.id
+          ? { ...friend, balance: friend.balance + value }
+          : friend
+      )
+    );
+
+    setSelectedFriend(null);
+  }
+
   function handleSelectFriend(friend) {
     setSelectedFriend(friend);
     setAddFriendIsOpen(false);
@@ -190,7 +211,9 @@ export default function App() {
           {addFriendIsOpen ? "Close" : "Add Friend"}
         </Button>
       </div>
-      {selectedFriend && <FormSplitBill friend={selectedFriend} />}
+      {selectedFriend && (
+        <FormSplitBill friend={selectedFriend} onSplitBill={handleSplitBill} />
+      )}
     </div>
   );
 }
